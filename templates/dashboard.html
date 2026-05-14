@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .panel-dark { 
+        background-color: #1a1e3b; 
+        border-radius: 15px; 
+        border: 1px solid #2a2f55; 
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .text-cyan { color: #00e5ff !important; }
+    
+    /* Warna Khusus Tabel K-Means */
+    .table-dark-custom { background-color: #11142a; border-radius: 10px; overflow: hidden; }
+    .table-dark-custom th { background-color: #2a2f55; color: #00e5ff; border: none; }
+    .table-dark-custom td { border-color: #2a2f55; vertical-align: middle; }
+    
+    .text-k-blue { color: #0dcaf0 !important; }   /* Biru / Teal */
+    .text-k-purple { color: #b366ff !important; } /* Ungu */
+    .text-k-yellow { color: #ffeb3b !important; } /* Kuning */
+</style>
+
+<h2 class="text-light mb-4 fw-bold pb-2 border-bottom border-secondary">
+    <i class="bi bi-speedometer2 text-cyan me-2"></i><span class="text-cyan">Dashboard</span> Statistik
+</h2>
+
+<div class="row g-4">
+
+    <div class="col-md-6">
+        <div class="panel-dark text-center p-4">
+            <h5 class="text-secondary small fw-bold text-uppercase mb-3">Harga Tertinggi</h5>
+            <h1 class="text-success fw-bold mb-0">{{ highest }}</h1>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="panel-dark text-center p-4">
+            <h5 class="text-secondary small fw-bold text-uppercase mb-3">Harga Terendah</h5>
+            <h1 class="text-danger fw-bold mb-0">{{ lowest }}</h1>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="panel-dark text-center p-4">
+            <h5 class="text-secondary small fw-bold text-uppercase mb-3">Total Data (Hari)</h5>
+            <h1 class="text-info fw-bold mb-0">{{ total_data }}</h1>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="panel-dark text-center p-4">
+            <h5 class="text-secondary small fw-bold text-uppercase mb-3">Rata-rata Harga</h5>
+            <h1 class="text-warning fw-bold mb-0">{{ average }}</h1>
+        </div>
+    </div>
+
+</div>
+
+<div class="row mt-5 g-4">
+    
+    <div class="col-md-6">
+        <div class="panel-dark text-center p-4 h-100">
+            <h5 class="mb-4 text-cyan fw-bold">Grafik Perbandingan Harga Asli vs Prediksi Model</h5>
+            <img src="{{ url_for('static', filename='plots/comparison.png') }}" class="img-fluid rounded border border-secondary" alt="Grafik Perbandingan" style="width: 100%; max-height: 350px; object-fit: contain;">
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="panel-dark text-center p-4 h-100">
+            <h5 class="mb-4 text-cyan fw-bold">K-Means Clustering Analysis</h5>
+            <img src="{{ url_for('static', filename='plots/kmeans_cluster.png') }}" class="img-fluid rounded border border-secondary mb-4" alt="K-Means Clustering" style="width: 100%; max-height: 250px; object-fit: contain;">
+            
+            <div class="table-responsive">
+                <table class="table table-dark table-dark-custom table-sm text-start mb-0">
+                    <thead>
+                        <tr>
+                            <th class="ps-3">Zona Warna</th>
+                            <th>Kondisi Pasar</th>
+                            <th>Karakteristik Harga</th>
+                        </tr>
+                    </thead>
+                    <tbody class="small">
+                        <tr>
+                            <td class="ps-3 text-k-blue fw-bold"><i class="bi bi-circle-fill me-1"></i> Biru </td>
+                            <td class="text-k-blue fw-semibold">Level Tinggi (High)</td>
+                            <td>Harga sedang tinggi, tren naik kuat.</td>
+                        </tr>
+                        <tr>
+                            <td class="ps-3 text-k-purple fw-bold"><i class="bi bi-circle-fill me-1"></i> Ungu </td>
+                            <td class="text-k-purple fw-semibold">Level Moderat (Mid)</td>
+                            <td>Harga stabil di rentang fluktuasi normal.</td>
+                        </tr>
+                        <tr>
+                            <td class="ps-3 text-k-yellow fw-bold"><i class="bi bi-circle-fill me-1"></i> Kuning </td>
+                            <td class="text-k-yellow fw-semibold">Level Rendah (Low)</td>
+                            <td>Harga relatif rendah dan bergerak mendatar.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="panel-dark text-center p-4 h-100">
+            <h5 class="mb-4 text-cyan fw-bold">Kurva Loss Training (ANN & LSTM)</h5>
+            <img src="{{ url_for('static', filename='plots/loss_curve.png') }}" class="img-fluid rounded border border-secondary" alt="Kurva Loss Training" style="width: 100%; max-height: 350px; object-fit: contain;">
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="panel-dark text-center p-4 h-100">
+            <h5 class="mb-4 text-cyan fw-bold">Residual Plot Analysis</h5>
+            <img src="{{ url_for('static', filename='plots/residual_plot.png') }}" class="img-fluid rounded border border-secondary" alt="Residual Plot" style="width: 100%; max-height: 350px; object-fit: contain;">
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

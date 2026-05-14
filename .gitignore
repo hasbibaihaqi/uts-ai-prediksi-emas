@@ -1,0 +1,9 @@
+# Mengabaikan folder environment dan cache Python
+__pycache__/
+*.pyc
+venv/
+env/
+.vscode/
+
+# Mengabaikan file dataset jika terlalu besar (opsional, tapi disarankan)
+# dataset/

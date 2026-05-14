@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Prediksi Emas ML</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        body {
+            background-color: #0f1225 !important;
+            color: #ffffff !important;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- SIDEBAR KIRI --- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px; /* Lebar menu samping */
+            height: 100vh;
+            background-color: #1a1e3b;
+            border-right: 1px solid #2a2f55;
+            z-index: 1050; /* Z-index dinaikkan agar di atas overlay */
+            display: flex;
+            flex-direction: column;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease; /* Animasi geser */
+        }
+
+        .sidebar-brand {
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 800;
+            border-bottom: 1px solid #2a2f55;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .sidebar-brand:hover {
+            color: #ffffff;
+        }
+
+        /* Tombol Tutup Sidebar (Hanya untuk Mobile) */
+        .btn-close-sidebar {
+            display: none;
+            position: absolute;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.5rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            padding: 0 15px;
+        }
+
+        .nav-link-custom {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: #94a3b8;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link-custom:hover {
+            background-color: rgba(0, 229, 255, 0.1);
+            color: #00e5ff;
+        }
+
+        .nav-link-custom.active {
+            background-color: rgba(0, 229, 255, 0.15);
+            color: #00e5ff;
+            border-left: 4px solid #00e5ff;
+        }
+
+        .nav-link-custom i {
+            width: 30px;
+            font-size: 1.2rem;
+        }
+
+        /* --- NAVBAR ATAS KHUSUS MOBILE --- */
+        .mobile-navbar {
+            display: none; /* Sembunyikan di layar laptop */
+            background-color: #1a1e3b;
+            padding: 15px 20px;
+            border-bottom: 1px solid #2a2f55;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            align-items: center;
+        }
+
+        .btn-hamburger {
+            background: none;
+            border: none;
+            color: #00e5ff;
+            font-size: 1.8rem;
+            padding: 0;
+            margin-right: 15px;
+        }
+
+        /* --- OVERLAY KHUSUS MOBILE --- */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1040;
+        }
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        /* --- AREA KONTEN UTAMA --- */
+        .main-content {
+            margin-left: 260px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+        
+        .content-wrapper {
+            flex: 1;
+            padding: 30px;
+        }
+
+        /* =========================================
+           RESPONSIVE LOGIC (UNTUK LAYAR HP/TABLET)
+           ========================================= */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                left: -260px; /* Sembunyikan sidebar ke kiri */
+            }
+            .sidebar.active {
+                left: 0; /* Munculkan sidebar saat aktif */
+            }
+            .btn-close-sidebar {
+                display: block; /* Tampilkan tombol X di mobile */
+            }
+            .mobile-navbar {
+                display: flex; /* Tampilkan Navbar Hamburger */
+            }
+            .main-content {
+                margin-left: 0; /* Hapus margin agar konten memenuhi layar */
+            }
+            .content-wrapper {
+                padding: 15px; /* Kurangi padding konten di HP */
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+    <div class="mobile-navbar">
+        <button id="btnOpenSidebar" class="btn-hamburger">
+            <i class="bi bi-list"></i>
+        </button>
+        <h5 class="mb-0 fw-bold text-light"><i class="bi bi-graph-up-arrow text-info me-2"></i>GoldPredict AI</h5>
+    </div>
+
+    <div class="sidebar" id="sidebarMenu">
+        
+        <div class="sidebar-brand">
+            <i class="bi bi-graph-up-arrow me-2 text-info"></i> GoldPredict AI
+            <button id="btnCloseSidebar" class="btn-close-sidebar"><i class="bi bi-x-lg"></i></button>
+        </div>
+
+        <div class="nav-menu">
+            <a href="/" class="nav-link-custom {% if request.path == '/' %}active{% endif %}">
+                <i class="bi bi-cpu"></i> Prediksi
+            </a>
+
+            <a href="/perbandingan" class="nav-link-custom {% if request.path == '/perbandingan' %}active{% endif %}">
+                <i class="bi bi-bar-chart-line"></i> Perbandingan Model
+            </a>
+
+            <a href="/history" class="nav-link-custom {% if request.path == '/history' %}active{% endif %}">
+                <i class="bi bi-clock-history"></i> Riwayat
+            </a>
+
+            <a href="/dashboard" class="nav-link-custom {% if request.path == '/dashboard' %}active{% endif %}">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </a>
+        </div>
+
+        <div class="mt-auto p-4 text-center border-top" style="border-color: #2a2f55 !important;">
+            <small class="text-secondary" style="font-size: 0.75rem;">
+                © 2026 GoldPredict AI<br>
+                Machine Learning & Deep Learning Prediction System
+            </small>
+        </div>
+
+    </div>
+
+    <div class="main-content">
+        <div class="content-wrapper">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const sidebar = document.getElementById('sidebarMenu');
+            const overlay = document.getElementById('sidebarOverlay');
+            const btnOpen = document.getElementById('btnOpenSidebar');
+            const btnClose = document.getElementById('btnCloseSidebar');
+
+            // Fungsi untuk membuka/menutup sidebar
+            function toggleSidebar() {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('show');
+            }
+
+            // Pasang event click ke tombol Hamburger
+            if(btnOpen) {
+                btnOpen.addEventListener('click', toggleSidebar);
+            }
+            
+            // Pasang event click ke tombol X di dalam sidebar
+            if(btnClose) {
+                btnClose.addEventListener('click', toggleSidebar);
+            }
+
+            // Tutup sidebar jika user menekan area gelap (overlay)
+            if(overlay) {
+                overlay.addEventListener('click', toggleSidebar);
+            }
+        });
+    </script>
+
+</body>
+</html>

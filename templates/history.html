@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .panel-dark { 
+        background-color: #1a1e3b; 
+        border-radius: 15px; 
+        border: 1px solid #2a2f55; 
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .text-cyan { color: #00e5ff !important; }
+    .table-dark-custom { background-color: #1a1e3b; border-color: #2a2f55; }
+    .table-dark-custom th { 
+        background-color: #2a2f55; 
+        color: #00e5ff; 
+        border-bottom: 2px solid #00e5ff; 
+        border-top: none; 
+        text-transform: uppercase; 
+        font-size: 0.85rem; 
+        letter-spacing: 0.5px;
+    }
+</style>
+
+<h2 class="text-light mb-4 fw-bold pb-2 border-bottom border-secondary">
+    <i class="bi bi-clock-history text-cyan me-2"></i><span class="text-cyan">Riwayat</span> Prediksi
+</h2>
+
+<div class="panel-dark p-4">
+    <div class="table-responsive">
+        <table class="table table-dark table-dark-custom table-hover align-middle text-center mb-0">
+            <thead>
+                <tr>
+                    <th class="py-3">ID</th>
+                    <th class="py-3 text-start">Model</th>
+                    <th class="py-3">Open</th>
+                    <th class="py-3">High</th>
+                    <th class="py-3">Low</th>
+                    <th class="py-3">Volume</th>
+                    <th class="py-3 text-end pe-4">Prediksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in data %}
+                <tr>
+                    <td class="text-secondary fw-bold">#{{ item[0] }}</td>
+                    <td class="text-start">
+                        <span class="badge bg-info text-dark px-2 py-1">{{ item[1] }}</span>
+                    </td>
+                    <td class="text-light">{{ "{:,.1f}".format(item[2]) }}</td>
+                    <td class="text-light">{{ "{:,.1f}".format(item[3]) }}</td>
+                    <td class="text-light">{{ "{:,.1f}".format(item[4]) }}</td>
+                    <td class="text-light">{{ "{:,.0f}".format(item[5]) }}</td>
+                    <td class="text-end pe-4 fw-bold text-success">
+                        Rp {{ "{:,.2f}".format(item[6]) }}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="py-5 text-secondary">
+                        <i class="bi bi-folder-x fs-1 d-block mb-3 opacity-50"></i>
+                        Belum ada data riwayat prediksi yang tersimpan di database.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

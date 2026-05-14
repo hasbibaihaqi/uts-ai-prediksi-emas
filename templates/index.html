@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* ========================================================
+       CSS CUSTOM: TEMA DASHBOARD ANALYTICAL
+       ======================================================== */
+    body { background-color: #11142a !important; color: #ffffff !important; }
+    
+    .panel-dark { 
+        background-color: #1a1e3b; 
+        border-radius: 15px; 
+        border: 1px solid #2a2f55; 
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    
+    .text-cyan { color: #00e5ff !important; }
+    .bg-cyan { background-color: #00e5ff !important; color: #11142a !important; }
+    
+    .card-orange { 
+        background: linear-gradient(135deg, #ff6a3d, #ff4b1f); 
+        border-radius: 15px; 
+        border: none;
+        box-shadow: 0 15px 25px rgba(255, 75, 31, 0.3);
+    }
+    
+    .input-dark { background-color: #11142a; border: 1px solid #2a2f55; color: white; }
+    .input-dark:focus { border-color: #00e5ff; background-color: #11142a; color: white; box-shadow: 0 0 0 0.2rem rgba(0, 229, 255, 0.25); }
+    
+    .table-dark-custom { background-color: #1a1e3b; border-color: #2a2f55; }
+    .table-dark-custom th { background-color: #2a2f55; color: #00e5ff; border-bottom: 2px solid #00e5ff; }
+    
+    .btn-predict { background-color: #00e5ff; color: #11142a; font-weight: bold; border-radius: 8px; border: none; transition: 0.3s; }
+    .btn-predict:hover { background-color: #00b3cc; transform: translateY(-2px); }
+    
+    /* Tambahan efek untuk tombol saat loading */
+    .btn-loading { opacity: 0.8; cursor: not-allowed; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container-fluid py-3">
+    <div class="row g-4 justify-content-center">
+        
+        <div class="col-xl-4 col-lg-5">
+            <div class="panel-dark p-4 h-100">
+                
+                <div class="text-center mb-4 pb-3 border-bottom border-secondary">
+                    <h3 class="fw-bold text-light">
+                        <span class="text-cyan">Prediksi</span> Harga Emas
+                    </h3>
+                    <p class="text-secondary small mb-0">
+                        Machine Learning & Deep Learning
+                    </p>
+                </div>
+
+                {% if error %}
+                <div class="alert alert-danger alert-dismissible fade show border-0" role="alert">
+                    {{ error }}
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                </div>
+                {% endif %}
+
+                <form id="predictForm" action="/predict" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary small text-uppercase">Harga Pembukaan (Open)</label>
+                        <input type="text" inputmode="numeric" name="open" class="form-control input-dark py-2 input-format" placeholder="Contoh: 2.350" value="{{ open_price if open_price else '' }}" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label fw-semibold text-secondary small text-uppercase">Tertinggi (High)</label>
+                            <input type="text" inputmode="numeric" name="high" class="form-control input-dark py-2 input-format" placeholder="Contoh: 2.365" value="{{ high_price if high_price else '' }}" required>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label fw-semibold text-secondary small text-uppercase">Terendah (Low)</label>
+                            <input type="text" inputmode="numeric" name="low" class="form-control input-dark py-2 input-format" placeholder="Contoh: 2.340" value="{{ low_price if low_price else '' }}" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-secondary small text-uppercase">Volume Transaksi</label>
+                        <input type="text" inputmode="numeric" name="volume" class="form-control input-dark py-2 input-format" placeholder="Contoh: 150.000" value="{{ volume if volume else '' }}" required>
+                    </div>
+
+                    <div class="d-grid mt-2">
+                        <button type="submit" id="btnSubmit" class="btn btn-predict py-3 fs-6 text-uppercase d-flex justify-content-center align-items-center">
+                            <span id="btnSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+                            <span id="btnText">Jalankan Prediksi</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="row mt-5 g-2">
+                    <div class="col-4">
+                        <div class="p-2 border border-secondary rounded text-center h-100" style="background: rgba(255,255,255,0.02);">
+                            <h6 class="text-cyan mb-1" style="font-size: 0.8rem;">Lin. Reg</h6>
+                            <small class="text-secondary" style="font-size: 0.65rem;">Linear sederhana</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 border border-secondary rounded text-center h-100" style="background: rgba(255,255,255,0.02);">
+                            <h6 class="text-warning mb-1" style="font-size: 0.8rem;">ANN/MLP</h6>
+                            <small class="text-secondary" style="font-size: 0.65rem;">Pola kompleks</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 border border-secondary rounded text-center h-100" style="background: rgba(255,255,255,0.02);">
+                            <h6 class="text-success mb-1" style="font-size: 0.8rem;">LSTM</h6>
+                            <small class="text-secondary" style="font-size: 0.65rem;">Data time-series</small>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-xl-8 col-lg-7">
+            
+            {% if all_results %}
+            
+            <div class="card-orange p-4 mb-4 text-white">
+                <div class="row align-items-center">
+                    <div class="col-md-7 border-end border-light border-opacity-25">
+                        <p class="mb-1 text-light opacity-75 text-uppercase small fw-bold">Prediksi Utama (Deep Learning LSTM)</p>
+                        <h1 class="fw-bold mb-0" style="font-size: 3rem;">Rp {{ "{:,.0f}".format(all_results.get('LSTM (Deep Learning)', 0)) }}</h1>
+                    </div>
+                    <div class="col-md-5 ps-md-4 mt-3 mt-md-0">
+                        <p class="mb-1 text-light opacity-75 text-uppercase small fw-bold">Regime Pasar (K-Means)</p>
+                        <div class="bg-dark text-warning fw-bold rounded-pill px-4 py-2 d-inline-block fs-5 shadow">
+                            {{ market_status }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-dark p-4 mb-4">
+                <h5 class="text-cyan mb-4">Perbandingan Algoritma Lainnya</h5>
+                <div class="table-responsive">
+                    <table class="table table-dark table-dark-custom table-hover text-center align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="text-start ps-4">Nama Algoritma AI</th>
+                                <th>Prediksi Harga Penutupan (Close)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for model, val in all_results.items() %}
+                                {% if model != 'LSTM (Deep Learning)' %}
+                                <tr>
+                                    <td class="text-start ps-4 py-3">{{ model }}</td>
+                                    <td class="fw-bold text-light fs-5 py-3">Rp {{ "{:,.2f}".format(val) }}</td>
+                                </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel-dark p-4">
+                <h5 class="text-cyan mb-4">Visualisasi Prediksi Harga Penutupan</h5>
+                <div style="height: 300px; width: 100%;">
+                    <canvas id="predictionChart"></canvas>
+                </div>
+            </div>
+
+            {% else %}
+            <div class="panel-dark p-5 h-100 d-flex flex-column align-items-center justify-content-center text-center">
+                <h4 class="text-secondary opacity-50 mb-3">Area Analisis Pasar</h4>
+                <p class="text-secondary w-75">Silakan masukkan data Open, High, Low, dan Volume pada panel di sebelah kiri, kemudian tekan tombol Prediksi untuk melihat hasil analisis dari kelima algoritma.</p>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Fungsi Pemisah Ribuan
+    function formatRibuan(angka) {
+        var number_string = angka.replace(/[^,\d]/g, '').toString(),
+        split   = number_string.split(','),
+        sisa    = split[0].length % 3,
+        rupiah  = split[0].substr(0, sisa),
+        ribuan  = split[0].substr(sisa).match(/\d{3}/gi);
+
+        if(ribuan){
+            var separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+        }
+
+        return split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Logika Input Formatting & Spinner
+        const inputs = document.querySelectorAll('.input-format');
+        const form = document.getElementById('predictForm');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const btnSpinner = document.getElementById('btnSpinner');
+        const btnText = document.getElementById('btnText');
+        
+        inputs.forEach(function(el) {
+            if(el.value) {
+                el.value = formatRibuan(el.value.replace('.', ','));
+            }
+            el.addEventListener('input', function(e) {
+                this.value = formatRibuan(this.value);
+            });
+        });
+
+        form.addEventListener('submit', function(e) {
+            btnSubmit.disabled = true;
+            btnSubmit.classList.add('btn-loading');
+            btnSpinner.classList.remove('d-none');
+            btnText.textContent = 'Memproses AI...';
+
+            inputs.forEach(function(el) {
+                el.value = el.value.replace(/\./g, '').replace(',', '.');
+            });
+        });
+
+        // 2. LOGIKA RENDER GRAFIK CHART.JS
+        {% if all_results %}
+            const chartLabels = [];
+            const chartData = [];
+            const chartColors = [];
+
+            {% for model, val in all_results.items() %}
+                chartLabels.push("{{ model }}");
+                chartData.push({{ val }});
+                
+                // Warna Oranye untuk LSTM, Cyan untuk model lainnya
+                {% if 'LSTM' in model %}
+                    chartColors.push('rgba(255, 106, 61, 0.8)');
+                {% else %}
+                    chartColors.push('rgba(0, 229, 255, 0.6)');
+                {% endif %}
+            {% endfor %}
+
+            const ctx = document.getElementById('predictionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'Prediksi Harga (Rp)',
+                        data: chartData,
+                        backgroundColor: chartColors,
+                        borderColor: chartColors.map(color => color.replace('0.6', '1').replace('0.8', '1')),
+                        borderWidth: 1,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ' Rp ' + context.raw.toLocaleString('id-ID');
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8', font: {size: 11} }
+                        }
+                    }
+                }
+            });
+        {% endif %}
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .panel-dark { 
+        background-color: #1a1e3b; 
+        border-radius: 15px; 
+        border: 1px solid #2a2f55; 
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    .mini-panel {
+        background-color: #11142a; 
+        border-radius: 10px; 
+        border: 1px solid #2a2f55;
+    }
+    .text-cyan { color: #00e5ff !important; }
+    .table-dark-custom { background-color: #1a1e3b; border-color: #2a2f55; }
+    .table-dark-custom th { background-color: #2a2f55; color: #00e5ff; border-bottom: 2px solid #00e5ff; border-top: none; }
+    
+    /* Warna Khusus Teks K-Means */
+    .text-k-blue { color: #0dcaf0 !important; }
+    .text-k-purple { color: #b366ff !important; }
+    .text-k-yellow { color: #ffeb3b !important; }
+</style>
+
+<div class="row">
+
+    <div class="col-12 mb-4">
+        <div class="panel-dark text-center p-4">
+            <h2 class="fw-bold text-light mb-3">
+                <i class="bi bi-bar-chart-line-fill text-cyan me-2"></i>
+                Komparasi Performa 5 Algoritma ML
+            </h2>
+            <p class="text-secondary mb-0">
+                Analisis performa Machine Learning dan Deep Learning untuk prediksi harga emas.
+            </p>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="panel-dark mb-5 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="mb-0 text-cyan fw-bold">Statistik Akurasi Model</h4>
+                <span class="badge bg-info text-dark px-3 py-2 fw-bold">5 Model Aktif</span>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-dark table-dark-custom table-hover text-center align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Model</th>
+                            <th>RMSE</th>
+                            <th>MAE</th>
+                            <th>R-Squared (R²)</th>
+                            <th>Akurasi</th>
+                            <th>Status Training</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="fw-semibold text-start ps-4">Linear Regression</td>
+                            <td>0.021</td>
+                            <td>0.018</td>
+                            <td>0.95</td>
+                            <td><span class="badge bg-success">95%</span></td>
+                            <td><span class="badge bg-success">Selesai</span></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-semibold text-start ps-4">ANN</td>
+                            <td>0.015</td>
+                            <td>0.011</td>
+                            <td>0.97</td>
+                            <td><span class="badge bg-info text-dark">97%</span></td>
+                            <td><span class="badge bg-success">Selesai</span></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-semibold text-start ps-4">LSTM (RNN)</td>
+                            <td>0.010</td>
+                            <td>0.008</td>
+                            <td>0.98</td>
+                            <td><span class="badge bg-warning text-dark">98%</span></td>
+                            <td><span class="badge bg-success">Selesai</span></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-semibold text-start ps-4">Backpropagation</td>
+                            <td>0.018</td>
+                            <td>0.014</td>
+                            <td>0.96</td>
+                            <td><span class="badge bg-primary">96%</span></td>
+                            <td><span class="badge bg-success">Selesai</span></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-semibold text-start ps-4">K-Means (Cluster)</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><span class="badge bg-secondary">Clustering</span></td>
+                            <td><span class="badge bg-success">Selesai</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="panel-dark text-center h-100 p-4">
+            <div class="mb-3"><i class="bi bi-graph-up-arrow text-cyan" style="font-size: 2rem;"></i></div>
+            <h5 class="text-cyan fw-bold">Training Loss Curve (ANN vs LSTM)</h5>
+            <p class="text-secondary small">Visualisasi proses training model deep learning.</p>
+            <img src="{{ url_for('static', filename='plots/loss_curve.png') }}" class="img-fluid rounded border border-secondary mt-2">
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="panel-dark text-center h-100 p-4">
+            <div class="mb-3"><i class="bi bi-currency-exchange text-warning" style="font-size: 2rem;"></i></div>
+            <h5 class="text-warning fw-bold">Actual vs Predicted Price Comparison</h5>
+            <p class="text-secondary small">Perbandingan harga asli dan hasil prediksi model.</p>
+            <img src="{{ url_for('static', filename='plots/comparison.png') }}" class="img-fluid rounded border border-secondary mt-2">
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="panel-dark text-center h-100 p-4">
+            <h5 class="text-cyan fw-bold mb-3">Residual Plot Analysis</h5>
+            <p class="text-secondary small">Analisis error model Linear Regression terhadap data asli.</p>
+            <img src="{{ url_for('static', filename='plots/residual_plot.png') }}" class="img-fluid rounded border border-secondary mt-2">
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="panel-dark text-center h-100 p-4">
+            <h5 class="text-cyan fw-bold mb-3">K-Means Clustering Analysis</h5>
+            <p class="text-secondary small mb-2">Visualisasi pengelompokan zona harga secara otomatis.</p>
+            <img src="{{ url_for('static', filename='plots/kmeans_cluster.png') }}" class="img-fluid rounded border border-secondary mb-3" style="max-height: 220px; object-fit: contain;">
+                 
+            <div class="p-3 mini-panel text-start">
+                <p class="text-cyan small mb-2 fw-bold">Interpretasi Zona Cluster (K-Means):</p>
+                <div class="d-flex justify-content-between border-bottom border-secondary py-1 small">
+                    <span class="text-k-blue fw-bold"><i class="bi bi-circle-fill me-1 small"></i> Biru </span>
+                    <span class="text-light">Level Tinggi (High Trend)</span>
+                </div>
+                <div class="d-flex justify-content-between border-bottom border-secondary py-1 small">
+                    <span class="text-k-purple fw-bold"><i class="bi bi-circle-fill me-1 small"></i> Ungu </span>
+                    <span class="text-light">Level Moderat (Normal)</span>
+                </div>
+                <div class="d-flex justify-content-between py-1 small">
+                    <span class="text-k-yellow fw-bold"><i class="bi bi-circle-fill me-1 small"></i> Kuning </span>
+                    <span class="text-light">Level Rendah (Sideways)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12">
+        <div class="panel-dark p-4">
+            <h4 class="text-light fw-bold mb-4 pb-2 border-bottom border-secondary">Kesimpulan Analisis</h4>
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="mini-panel text-center p-3 h-100">
+                        <h6 class="text-info fw-bold text-uppercase small">Model Terbaik</h6>
+                        <h3 class="fw-bold text-light mb-0 mt-2">LSTM</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mini-panel text-center p-3 h-100">
+                        <h6 class="text-success fw-bold text-uppercase small">Akurasi Tertinggi</h6>
+                        <h3 class="fw-bold text-light mb-0 mt-2">98%</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mini-panel text-center p-3 h-100">
+                        <h6 class="text-warning fw-bold text-uppercase small">Error Terendah</h6>
+                        <h3 class="fw-bold text-light mb-0 mt-2">0.008</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="mini-panel text-center p-3 h-100">
+                        <h6 class="text-danger fw-bold text-uppercase small">Total Model</h6>
+                        <h3 class="fw-bold text-light mb-0 mt-2">5</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
