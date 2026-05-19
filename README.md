@@ -17,8 +17,8 @@ Aplikasi web berbasis Machine Learning dan Deep Learning untuk memprediksi harga
 5. K-Means Clustering
 
 ### 🚀 Link Penting
-* **Demo Aplikasi (Live):** [NANTI ISI DENGAN LINK .MY.ID]
-* **Video Presentasi (YouTube):** [NANTI ISI DENGAN LINK YOUTUBE]
+* **Demo Aplikasi (Live):** https://hasbibaihaqi.my.id
+* **Video Presentasi (YouTube):** https://youtu.be/bEgoj81HhIQ
 * **Laporan Jurnal (PDF):** Terdapat di dalam folder `docs/`
 
 ### ⚙️ Cara Menjalankan Aplikasi di Komputer Lokal
